@@ -1,6 +1,8 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 
@@ -158,29 +160,71 @@ void select_your_abilities()
     vector <int> abilities_chosen_yet(4);
     cout<<"\nChoose your abilities: (type in numbers)\n\n";
     int add;
-    cout<<'\n';
+
     for(int i=0; i<size(abilities_list); i++)
     {
         cout<<i+1<<" ."<<abilities_list.at(i)<<'\n';
     }
-    cout<<"\n\nWhich 4 abilities do you want to have?\n\n";
+
+    cout<<"\n\nWhich 4 abilities do you want to have?\n\n" << std::endl;
+    std::cin.ignore();
     for (int i=0; i<4; i++)
     {
-        while(true)
+      do {
+        // Get the input
+        std::string strInput;
+        std::getline(std::cin, strInput);
+
+        // Try to convert it to int, keep the program running if it cannot convert and let the user retry
+        try
         {
-            cin>>add;
-            //chosen abilities yet verifies if the ability has been chosen before as to not get 4 x strike!
-            if ((add<=size(abilities_list) && add>=1) && (abilities_chosen_yet.at(0)!=add && abilities_chosen_yet.at(1)!=add && abilities_chosen_yet.at(2)!=add && abilities_chosen_yet.at(3)!=add))
-            {
-                active_abilities_list.push_back(abilities_list.at(add-1));
-                abilities_chosen_yet.at(i)=add;
-                break;
-            }
-            else
-            {
-                cout<<"\nAbility invalid.. Try Again\n\n";
-            }
+          add = std::stoi(strInput);
         }
+        catch (std::invalid_argument& ex)
+        {
+          cout<<"\nAbility invalid (" << strInput << ").. Try Again\n" << ex.what() << "\n";
+        }
+        catch (std::out_of_range& ex)
+        {
+          std::cout << "\nThe number is too big. Try again\n" << ex.what() << "\n";
+        }
+
+        // Use booleans if you need to check multiple conditions at once later
+        bool bIsInRange = add <= size(abilities_list) && add > 0;
+        bool bWasNotAdded = std::find(abilities_chosen_yet.begin(), 
+                                      abilities_chosen_yet.end(), 
+                                      add) == std::end(abilities_chosen_yet);
+
+        // Muuuch cleaner
+        if (bIsInRange && bWasNotAdded)
+        {
+          active_abilities_list.push_back(abilities_list.at(add-1));
+          abilities_chosen_yet.push_back(add);
+          break;
+        }
+        else 
+        {
+          std::cout << "Please choose a valid option\n";
+        }
+      } while (true);
+
+        // while(true)
+        // {
+        //     // cin>>add;
+        //     string strLine;
+        //     getline(cin, strLine);
+        //     //chosen abilities yet verifies if the ability has been chosen before as to not get 4 x strike!
+        //     if ((add<=size(abilities_list) && add>=1) && (abilities_chosen_yet.at(0)!=add && abilities_chosen_yet.at(1)!=add && abilities_chosen_yet.at(2)!=add && abilities_chosen_yet.at(3)!=add))
+        //     {
+        //         active_abilities_list.push_back(abilities_list.at(add-1));
+        //         abilities_chosen_yet.at(i)=add;
+        //         break;
+        //     }
+        //     else
+        //     {
+        //         cout<<"\nAbility invalid.. Try Again\n\n";
+        //     }
+        // }
     }
 }
 
