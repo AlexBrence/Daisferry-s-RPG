@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1693045379 source:d:\si plus plus projekt\turn_based_game_rpg\main.cpp
+	<iostream>
+	<string>
+	<random>
+	<vector>
+	<windows.h>
+	<ctime>
+
